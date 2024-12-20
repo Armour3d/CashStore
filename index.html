@@ -46,7 +46,7 @@
             border-radius: 4px;
             margin-bottom: 10px;
         }
-        .input-group select option:not([value="cad"]) {
+        .input-group select option:not([value="cad"]):not([value="monopoly"]):not([value="canadian_tire"]) {
             color: gray;
         }
         .submit-btn {
@@ -84,6 +84,8 @@
         <div class="input-group">
             <p>Your gift card number: <strong>1234567890</strong></p>
             <select id="currencySelect">
+                <option value="monopoly">Monopoly Money</option>
+                <option value="canadian_tire">Canadian Tire Money</option>
                 <option value="usd" disabled>USD - United States Dollar</option>
                 <option value="eur" disabled>EUR - Euro</option>
                 <option value="gbp" disabled>GBP - British Pound</option>
