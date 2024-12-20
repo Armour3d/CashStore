@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             text-align: center;
+            overflow: hidden;
         }
         .container {
             max-width: 600px;
@@ -49,7 +50,7 @@
         .input-group select option:not([value="cad"]):not([value="monopoly"]):not([value="canadian_tire"]) {
             color: gray;
         }
-        .submit-btn {
+        .submit-btn, .random-btn {
             padding: 10px 20px;
             font-size: 1em;
             color: #fff;
@@ -58,8 +59,9 @@
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
+            margin: 5px;
         }
-        .submit-btn:hover {
+        .submit-btn:hover, .random-btn:hover {
             background-color: #45a049;
         }
         #message {
@@ -68,11 +70,57 @@
             font-size: 1.2em;
             color: #4CAF50;
         }
+        @keyframes cashAnimation {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-200px); opacity: 0; }
+        }
+        .cash-bill {
+            position: absolute;
+            font-size: 20px;
+            color: green;
+            animation: cashAnimation 4s linear;
+        }
     </style>
     <script>
-        function exchangeGiftCard() {
-            const message = document.getElementById('message');
-            message.style.display = 'block';
+        function getRandomPosition() {
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            return { x, y };
+        }
+
+        function showCashAnimation() {
+            for (let i = 0; i < 20; i++) {
+                const bill = document.createElement('div');
+                bill.classList.add('cash-bill');
+                bill.textContent = '$';
+                const position = getRandomPosition();
+                bill.style.left = `${position.x}px`;
+                bill.style.top = `${position.y}px`;
+                document.body.appendChild(bill);
+                setTimeout(() => bill.remove(), 4000);
+            }
+        }
+
+		function exchangeGiftCard() {
+			const currencySelect = document.getElementById('currencySelect');
+			currencySelect.value = 'cad'; // Reset selector to CAD
+			
+			const selectedCurrency = currencySelect.options[currencySelect.selectedIndex].text;
+
+			const message = document.getElementById('message');
+			message.style.display = 'block';
+			message.textContent = `Thanks for shopping with us. Your $50 in ${selectedCurrency} will now be delivered to your tracked location immediately.`;
+
+			showCashAnimation();
+			const audio = new Audio('cash-register.mp3');
+			audio.play();
+		}
+
+        function randomCurrency() {
+            const currencySelect = document.getElementById('currencySelect');
+            const options = Array.from(currencySelect.options).filter(option => !option.disabled);
+            const randomOption = options[Math.floor(Math.random() * options.length)];
+            currencySelect.value = randomOption.value;
         }
     </script>
 </head>
@@ -80,12 +128,10 @@
     <div class="container">
         <h1>Cash Store Gift Card Exchange</h1>
         <p>Welcome to the Cash Store! Exchange your gift card for cash.*</p>
-        <img src="Cash-Store-Card.webp" alt="Cash Store Gift Card" class="gift-card-image">
+        <img src="gift-card-placeholder.png" alt="Cash Store Gift Card" class="gift-card-image">
         <div class="input-group">
             <p>Your gift card number: <strong>1234567890</strong></p>
             <select id="currencySelect">
-                <option value="monopoly">MOM - Monopoly Money</option>
-                <option value="canadian_tire">CTM - Canadian Tire Money</option>
                 <option value="usd" disabled>USD - United States Dollar</option>
                 <option value="eur" disabled>EUR - Euro</option>
                 <option value="gbp" disabled>GBP - British Pound</option>
@@ -100,7 +146,10 @@
                 <option value="chf" disabled>CHF - Swiss Franc</option>
                 <option value="sek" disabled>SEK - Swedish Krona</option>
                 <option value="nok" disabled>NOK - Norwegian Krone</option>
+                <option value="monopoly">Monopoly Money</option>
+                <option value="canadian_tire">Canadian Tire Money</option>
             </select>
+            <button class="random-btn" onclick="randomCurrency()">Surprise Me!</button>
         </div>
         <button class="submit-btn" onclick="exchangeGiftCard()">Exchange for Cash</button>
         <p id="message">Thanks for shopping with us. Your cash will now be delivered to your tracked location immediately.</p>
